@@ -102,5 +102,9 @@ I had some wierd issues here, a reboot fixed it.
 $ sudo reboot
 
 Now you should have login required for Kibana, and be able to plug in your network in/out to ports 3 and 4 respectively.
+Worth creating a new role in Kibana with perms to the Bro and Suri indexes, then a new user for yourself with that role and the 
+required "kibana_user" role as well.
+Note that the "elastic" user is the superuser - you'll need to login as that initally to be able to manage roles/users.
+
 
 Todo: Upgrade ES to 6.2.0 (and see what breaks!)
