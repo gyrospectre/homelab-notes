@@ -1,1 +1,106 @@
 # rocknsm-notes
+
+Some notes on installing Rock NSM. 
+
+Hardware: ASRock Q1900 mini-itx w/integrated Quad Core 2GHz J1900 w/VT-x support enabled
+4 NICS, 1 through 4.
+
+Goal was to setup port 1 and the wireless as management, ports 2 as a capture port, and 3 and 4 as a bridge to put the NSM inline with my home network. 
+
+Install some extras:
+$ sudo yum install bridge-utils
+$ sudo yum install wireless-tools
+
+Configure bridging interface "nm-bridge" per
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/ch-configure_network_bridging
+Use interfaces enp3s0 and enp4s0 for bridge - 3 named "Inside" and 4 "Outside":
+$ sudo nmtui
+
+Update monitor ints, setting 3 and 4 and the wireless int to non monitored, and adding the new bridge int.
+$ sudo vi /etc/rocknsm/config.yml
+
+Change
+rock_monifs:
+    - enp2s0
+    - enp4s0
+    - wlp0s20u3
+    - enp3s0
+
+To:
+rock_monifs:
+    - enp2s0
+#    - enp4s0
+#    - wlp0s20u3
+#    - enp3s0
+    - nm-bridge
+
+Go!
+$ sudo /opt/rocknsm/rock/bin/deploy_rock.sh
+
+Previous promisc interfaces are not changed, just reboot to ensure a clean setup
+$ sudo reboot
+
+Setup WPA for mgmt:
+https://wiki.centos.org/HowTos/Laptops/WpaSupplicant
+
+$ sudo service elasticsearch stop
+$ cd /usr/share/elasticsearch/
+$ sudo bin/elasticsearch-plugin install x-pack
+
+Xpack will now download and install. Enter y for both questions.
+
+-> Downloading x-pack from elastic
+[=================================================] 100%  
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@     WARNING: plugin requires additional permissions     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+* java.io.FilePermission \\.\pipe\* read,write
+* java.lang.RuntimePermission accessClassInPackage.com.sun.activation.registries
+* java.lang.RuntimePermission getClassLoader
+* java.lang.RuntimePermission setContextClassLoader
+* java.lang.RuntimePermission setFactory
+* java.net.SocketPermission * connect,accept,resolve
+* java.security.SecurityPermission createPolicy.JavaPolicy
+* java.security.SecurityPermission getPolicy
+* java.security.SecurityPermission putProviderProperty.BC
+* java.security.SecurityPermission setPolicy
+* java.util.PropertyPermission * read,write
+* javax.net.ssl.SSLPermission setHostnameVerifier
+See http://docs.oracle.com/javase/8/docs/technotes/guides/security/permissions.html
+for descriptions of what these permissions allow and the associated risks.
+
+Continue with installation? [y/N]y
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@        WARNING: plugin forks a native controller        @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+This plugin launches a native controller that is not subject to the Java
+security manager nor to system call filters.
+
+Continue with installation? [y/N]y
+-> Installed x-pack
+
+Start ES:
+$ sudo service elasticsearch start
+
+Change passwords:
+https://www.elastic.co/guide/en/x-pack/5.6/security-getting-started.html
+
+$ cd /usr/share/kibana
+$ sudo bin/kibana-plugin install x-pack
+
+X pack will be installed on Kibana after download. Optimising those pesky browser bundles takes a while.. :-(
+
+Update the ES password in the Kibana conf:
+$ sudo vi  /etc/kibana/kibana.yml
+elasticsearch.username: "kibana"
+elasticsearch.password: "<pass>"
+
+Start Kibana:
+$ sudo service kibana start
+
+I had some wierd issues here, a reboot fixed it.
+$ sudo reboot
+
+Now you should have login required for Kibana, and be able to plug in your network in/out to ports 3 and 4 respectively.
+
+Todo: Upgrade ES to 6.2.0 (and see what breaks!)
