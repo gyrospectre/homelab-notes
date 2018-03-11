@@ -1,0 +1,64 @@
+How to get Phantom Cyber running in ProxMox.
+
+Download the PC OVA from the Phantom website. You'll need to register first, and this Community version is action count/day limited. I used v3.5.188.
+
+https://www.phantom.us/
+
+Copy the OVA to the ProxMox server using SCP, to the /root dir.
+
+Untar the OVA.
+
+# tar xvf phantom-3.5.188.ova
+
+Examine each disk file, to find out what it was provisioned as.
+
+root@pve:~# qemu-img info phantom_origin_release__3.5_centos6_release-disk1.vmdk
+image: phantom_origin_release__3.5_centos6_release-disk1.vmdk
+file format: vmdk
+virtual size: 100G (107374182400 bytes)
+disk size: 1.1G
+cluster_size: 65536
+Format specific information:
+    cid: 57789692
+    parent cid: 4294967295
+    create type: streamOptimized
+    extents:
+        [0]:
+            compressed: true
+            virtual size: 107374182400
+            filename: phantom_origin_release__3.5_centos6_release-disk1.vmdk
+            cluster size: 65536
+            format:
+
+This gets us the following values for all disks:
+
+1 100G
+2 100G
+3 100G
+4 1G
+5 200G
+
+In the ProxMox UI, create a new vm, with 4G memory, 2sockets/2cores (4 procs), 1 SCSI disk of 100G and network bridging. I used VMID 100.
+Then add 4 more disks per sizes above. You should now have 5 disks, check from a console with lvdisplay, which should tell you of the 
+existance of these 5 volume files:
+
+/dev/pve/vm-100-disk-5
+/dev/pve/vm-100-disk-4
+/dev/pve/vm-100-disk-3
+/dev/pve/vm-100-disk-2
+/dev/pve/vm-100-disk-1
+
+Now, covert the VMDK disk images to raw, and write then into the new LVs.
+
+root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk1.vmdk /dev/pve/vm-100-disk-1
+root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk2.vmdk /dev/pve/vm-100-disk-2
+root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk3.vmdk /dev/pve/vm-100-disk-3
+root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk4.vmdk /dev/pve/vm-100-disk-4
+root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk5.vmdk /dev/pve/vm-100-disk-5
+
+Start your VM from the proxmox console, Phantom should be up now.
+
+References:
+https://www.jamescoyle.net/how-to/1218-upload-ova-to-proxmox-kvm
+http://www.binaryheartbeat.net/2016/05/importing-ova-container-into-proxmox.html
+https://serverfault.com/questions/834807/how-to-migrate-a-vmware-vmdk-to-proxmox-4-4-with-local-lvm-storage
