@@ -1,6 +1,7 @@
 How to get Phantom Cyber running in ProxMox.
 
-Download the PC OVA from the Phantom website. You'll need to register first, and this Community version is action count/day limited. I used v3.5.188.
+Download the PC OVA from the Phantom website. You'll need to register first, and this Community version is action count/day limited.
+I used v3.5.188, with ProxMox 5.1.
 
 https://www.phantom.us/
 
@@ -48,8 +49,8 @@ existance of these 5 volume files:
 /dev/pve/vm-100-disk-2
 /dev/pve/vm-100-disk-1
 
-Now, covert the VMDK disk images to raw, and write then into the new LVs. Note that this takes a while (several hours on my hardware) - get 
-some coffee!
+Now, covert the VMDK disk images to raw, and write then into the new LVs. Note that this takes a while (several hours on my hardware) 
+Get some coffee!
 
 root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk1.vmdk /dev/pve/vm-100-disk-1
 root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk2.vmdk /dev/pve/vm-100-disk-2
