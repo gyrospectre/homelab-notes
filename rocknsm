@@ -101,6 +101,27 @@ $ sudo service kibana start
 I had some wierd issues here, a reboot fixed it.
 $ sudo reboot
 
+Now do LogStash.
+
+$ cd /usr/share/logstash/
+$ sudo bin/logstash-plugin install x-pack
+
+Update Logstash auth:
+$ sudo vi /etc/logstash/logstash.yml
+
+Add:
+xpack.monitoring.elasticsearch.url: http://127.0.0.1:9200
+xpack.monitoring.elasticsearch.username: logstash_system
+xpack.monitoring.elasticsearch.password: <pass>
+
+$ sudo vi /etc/logstash/conf.d/*.conf
+To the elastic search output stanza, add the ES superuser. Not super keen about this, but the other users don't seem to have
+enough perms and to be honest I took the easy option and just used this user instead of working out how to add perms to the LS user! :-)
+        user => elastic
+        password => <pass>
+
+$ sudo service logstash restart
+
 Now you should have login required for Kibana, and be able to plug in your network in/out to ports 3 and 4 respectively.
 Worth creating a new role in Kibana with perms to the Bro and Suri indexes, then a new user for yourself with that role and the 
 required "kibana_user" role as well.
