@@ -1,0 +1,26 @@
+Work in progress.
+
+-Setup Phantom ES Integration-
+Create a user for Phantom on ES:
+$ cd /usr/share/elasticsearch
+$ sudo bin/x-pack/users useradd phantom -p <pass>
+$ sudo bin/x-pack/users roles phantom -a kibana_user,monitoring_user,reporting_user,remote_monitoring_agent
+
+Set ES to listen on all interfaces, not just localhost:
+$ sudo vi /etc/elasticsearch/elasticsearch.yml
+
+Add your IP to this line with comma separator
+network.host: _local:ipv4_,<your RockNSM IP>
+
+$ sudo service elasticsearch restart
+
+Allow Phantom through iptables:
+$ sudo iptables -A IN_public_allow -p tcp -s <your Phantom IP> --dport 9200 -j ACCEPT
+
+Now, in Phantom, go into Apps and find ElasticSearch. Create a new asset for it.
+In Asset Settings:
+Device URL: http://<RockNSM IP>:9200
+Username: phantom
+Pass: <pass from above>
+
+Save, and click Test Connectivity. All should pass - now ready to use in playbooks.
