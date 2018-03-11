@@ -83,3 +83,4 @@ References:
 https://www.jamescoyle.net/how-to/1218-upload-ova-to-proxmox-kvm
 http://www.binaryheartbeat.net/2016/05/importing-ova-container-into-proxmox.html
 https://serverfault.com/questions/834807/how-to-migrate-a-vmware-vmdk-to-proxmox-4-4-with-local-lvm-storage
+http://wiki.indie-it.com/wiki/Proxmox#HOWTO:_CONVERT:
