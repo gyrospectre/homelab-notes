@@ -48,7 +48,8 @@ existance of these 5 volume files:
 /dev/pve/vm-100-disk-2
 /dev/pve/vm-100-disk-1
 
-Now, covert the VMDK disk images to raw, and write then into the new LVs.
+Now, covert the VMDK disk images to raw, and write then into the new LVs. Note that this takes a while (several hours on my hardware) - get 
+some coffee!
 
 root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk1.vmdk /dev/pve/vm-100-disk-1
 root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk2.vmdk /dev/pve/vm-100-disk-2
