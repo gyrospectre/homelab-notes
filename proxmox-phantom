@@ -53,11 +53,11 @@ existance of these 5 volume files:
 
 Now, convert the VMDK disk images to qcow2, and copy to the new directory.
 
-root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk1.vmdk /dev/pve/vm-100-disk-1
-root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk2.vmdk /dev/pve/vm-100-disk-2
-root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk3.vmdk /dev/pve/vm-100-disk-3
-root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk4.vmdk /dev/pve/vm-100-disk-4
-root@pve:~# qemu-img convert -p -O raw phantom_origin_release__3.5_centos6_release-disk5.vmdk /dev/pve/vm-100-disk-5
+# qemu-img convert -f vmdk phantom_origin_release__3.5_centos6_release-disk1.vmdk -O qcow2 phantom_origin_release__3.5_centos6_release-disk1.qcow2
+# qemu-img convert -f vmdk phantom_origin_release__3.5_centos6_release-disk2.vmdk -O qcow2 phantom_origin_release__3.5_centos6_release-disk2.qcow2
+# qemu-img convert -f vmdk phantom_origin_release__3.5_centos6_release-disk3.vmdk -O qcow2 phantom_origin_release__3.5_centos6_release-disk3.qcow2
+# qemu-img convert -f vmdk phantom_origin_release__3.5_centos6_release-disk4.vmdk -O qcow2 phantom_origin_release__3.5_centos6_release-disk4.qcow2
+# qemu-img convert -f vmdk phantom_origin_release__3.5_centos6_release-disk5.vmdk -O qcow2 phantom_origin_release__3.5_centos6_release-disk5.qcow2
 
 # cd /var/lib/vz/images
 # mkdir 100
