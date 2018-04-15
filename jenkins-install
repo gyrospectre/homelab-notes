@@ -1,0 +1,8 @@
+$ sudo docker pull jenkins/jenkins:lts
+$ sudo docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+Grab the initial admin pass from the startup logs.
+Browse to http://<IP>:8080
+Login, choose some plugins. Create an admin user.
+Click Manage Jenkins on the left and then Manage Plugins in the center.
+Install the Blue Ocean plugin.
+My JIRA plugin failed the first time, had to go back and retry this individually. 2nd time worked fine?
